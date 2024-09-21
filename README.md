@@ -1,1 +1,9 @@
-# command-runner
+## usage
+
+see examples folder
+
+---
+
+## License
+
+MIT
