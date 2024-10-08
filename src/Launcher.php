@@ -4,23 +4,12 @@
 
 class Launcher
 {
-    public string $command;
-    public string $scriptName;
-    public int    $times = 1;
+    use \Coco\logger\Logger;
 
-    public function __construct(public string $scriptPath, public string $phpBin = 'php')
+    public int $times = 1;
+
+    public function __construct(public string $command)
     {
-        if (!is_file($scriptPath)) {
-            throw new \Exception($scriptPath . ' 不存在');
-        }
-
-        if (!is_executable($scriptPath)) {
-            throw new \Exception($scriptPath . ' 不可执行');
-        }
-
-        $this->scriptPath = realpath($scriptPath);
-
-        $this->scriptName = pathinfo($this->scriptPath, PATHINFO_FILENAME);
     }
 
     public function setTimes(string $times): static
@@ -32,29 +21,14 @@ class Launcher
 
     public function getLanuchCommand(): string
     {
-        $this->chdir();
-
         $arr = [
             'nohup',
-            $this->phpBin,
-            $this->scriptPath,
+            $this->command,
             '> /dev/null 2>&1 &',
         ];
 
         return implode(' ', $arr);
     }
-
-    public function getStopCommand(): string
-    {
-        $arr = [
-            'pkill',
-            '-f',
-            '"' . $this->scriptPath . '"',
-        ];
-
-        return implode(' ', $arr);
-    }
-
 
     public function getKillByPidCommand(int $pid): string
     {
@@ -67,72 +41,63 @@ class Launcher
         return implode(' ', $arr);
     }
 
-    public function killByPid(int $pid): void
+    public function getKillByKeywordCommand(string $keyword): string
+    {
+        $arr = [
+            'pkill',
+            '-f',
+            '"' . $keyword . '"',
+        ];
+
+        return implode(' ', $arr);
+    }
+
+    public function killByKeyword(string $keyword): void
+    {
+        $command = $this->getKillByKeywordCommand($keyword);
+
+        $this->exec($command);
+    }
+
+    public function killByKeyPid(int $pid): void
     {
         $command = $this->getKillByPidCommand($pid);
-        exec($command, $output, $status);
 
-        if ($status === 0) {
-            $msg = "执行成功: " . $command . PHP_EOL;
-        } else {
-            $msg = "执行失败: " . $command . PHP_EOL;
-            $msg .= json_encode($output, 256) . PHP_EOL;
-        }
-
-        echo $msg;
+        $this->exec($command);
     }
 
     public function launch(): void
     {
         for ($i = 0; $i < $this->times; $i++) {
             $command = $this->getLanuchCommand();
-            exec($command, $output, $status);
-
-            if ($status === 0) {
-                $msg = "执行成功: " . $command . PHP_EOL;
-            } else {
-                $msg = "执行失败: " . $command . PHP_EOL;
-                $msg .= json_encode($output, 256) . PHP_EOL;
-            }
-
-            echo $msg;
+            $this->exec($command);
         }
-
-        echo '启动完成,当前启动:' . $this->times . ',一共启动:' . $this->getCount();
+        $this->logInfo('启动完成,当前启动:' . $this->times);
     }
 
-    public function stop(): void
+    protected function exec($command): bool
     {
-        $count = $this->getCount();
-        if ($count) {
-            $command = $this->getStopCommand();
+        exec($command, $output, $status);
 
-            exec($command, $output, $status);
+        if ($status === 0) {
+            $msg = "执行成功: " . $command;
+            $this->logInfo($msg);
 
-            if ($status === 0) {
-                $msg = "执行成功: " . $command . PHP_EOL;
-                $msg .= '共:' . $count . PHP_EOL;
-            } else {
-                $msg = "执行失败: " . $command . PHP_EOL;
-                $msg .= json_encode($output, 256) . PHP_EOL;
-            }
-
-            echo $msg;
+            return true;
         } else {
-            echo '没有启动的任务';
+            $msg = "执行失败: " . $command;
+            $msg .= json_encode($output, 256);
+            $this->logInfo($msg);
+
+            return false;
         }
     }
 
-    public function getCount(): ?int
-    {
-        return count($this->getProcessList());
-    }
-
-    public function getProcessList(): array
+    public function getProcessListByKeyword(string $keyword): array
     {
         $arr = [
             'ps aux | grep',
-            '"' . $this->scriptPath . '"',
+            '"' . $keyword . '"',
         ];
 
         $command = implode(' ', $arr);
@@ -163,10 +128,6 @@ class Launcher
         return $result;
     }
 
-    protected function chdir(): void
-    {
-        chdir(dirname($this->scriptPath));
-    }
 
     protected static function formatMemorySize($size): string
     {

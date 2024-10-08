@@ -1,10 +1,10 @@
 <?php
 
-    use Coco\commandRunner\Launcher;
+    use Coco\commandRunner\PhpLauncher;
 
     require '../vendor/autoload.php';
 
     $script = 'test.php';
 
-    $launcher = new Launcher($script);
+    $launcher = new PhpLauncher($script);
 
