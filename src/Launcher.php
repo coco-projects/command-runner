@@ -59,7 +59,7 @@ class Launcher
         $this->exec($command);
     }
 
-    public function killByKeyPid(int $pid): void
+    public function killByPid(int $pid): void
     {
         $command = $this->getKillByPidCommand($pid);
 

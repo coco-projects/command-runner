@@ -2,5 +2,5 @@
 
     require "./common.php";
 
-//    echo $launcher->getKillByPidCommand(384844);
-        $launcher->killByPid(384844);
+    echo $launcher->getKillByPidCommand(570398);
+//        $launcher->killByPid(570396);

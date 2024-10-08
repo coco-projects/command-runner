@@ -8,6 +8,9 @@
 
     $launcher = new Launcher($script);
 
+    $launcher->setStandardLogger('test');
+    $launcher->addStdoutHandler(callback: Launcher::getStandardFormatter());
+
     $launcher->launch();
 
 

@@ -8,3 +8,5 @@
 
     $launcher = new PhpLauncher($script);
 
+    $launcher->setStandardLogger('test');
+    $launcher->addStdoutHandler(callback: PhpLauncher::getStandardFormatter());
