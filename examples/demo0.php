@@ -10,6 +10,7 @@
 
     $launcher->setStandardLogger('test');
     $launcher->addStdoutHandler(callback: Launcher::getStandardFormatter());
+    $launcher->addRedisHandler(callback: Launcher::getStandardFormatter());
 
     $launcher->launch();
 

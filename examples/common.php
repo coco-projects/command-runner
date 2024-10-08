@@ -10,3 +10,4 @@
 
     $launcher->setStandardLogger('test');
     $launcher->addStdoutHandler(callback: PhpLauncher::getStandardFormatter());
+    $launcher->addRedisHandler(callback: PhpLauncher::getStandardFormatter());
