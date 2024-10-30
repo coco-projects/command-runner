@@ -96,7 +96,7 @@ class Launcher
     public static function getProcessListByKeyword(string $keyword): array
     {
         $arr = [
-            'ps aux | grep',
+            'ps aux | grep -iP',
             '"' . $keyword . '"',
         ];
 
