@@ -36,7 +36,7 @@ class PhpLauncher extends Launcher
 
     public function getStopCommand(): string
     {
-        return $this->getKillByKeywordCommand($this->scriptPath);
+        return static::getKillByKeywordCommand($this->scriptPath);
     }
 
     public function stop(): void
@@ -57,9 +57,7 @@ class PhpLauncher extends Launcher
 
     public function getProcessList(): array
     {
-        $result = $this->getProcessListByKeyword($this->scriptPath);
-
-        return $result;
+        return static::getProcessListByKeyword($this->scriptPath);
     }
 
     protected function chdir(): void

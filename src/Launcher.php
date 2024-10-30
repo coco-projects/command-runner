@@ -30,7 +30,7 @@ class Launcher
         return implode(' ', $arr);
     }
 
-    public function getKillByPidCommand(int $pid): string
+    public static function getKillByPidCommand(int $pid): string
     {
         $arr = [
             'kill',
@@ -41,7 +41,7 @@ class Launcher
         return implode(' ', $arr);
     }
 
-    public function getKillByKeywordCommand(string $keyword): string
+    public static function getKillByKeywordCommand(string $keyword): string
     {
         $arr = [
             'pkill',
@@ -54,14 +54,14 @@ class Launcher
 
     public function killByKeyword(string $keyword): void
     {
-        $command = $this->getKillByKeywordCommand($keyword);
+        $command = static::getKillByKeywordCommand($keyword);
 
         $this->exec($command);
     }
 
     public function killByPid(int $pid): void
     {
-        $command = $this->getKillByPidCommand($pid);
+        $command = static::getKillByPidCommand($pid);
 
         $this->exec($command);
     }
@@ -93,7 +93,7 @@ class Launcher
         }
     }
 
-    public function getProcessListByKeyword(string $keyword): array
+    public static function getProcessListByKeyword(string $keyword): array
     {
         $arr = [
             'ps aux | grep',
