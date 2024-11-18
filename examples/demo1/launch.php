@@ -2,7 +2,7 @@
 
     require "./common.php";
 
-    $launcher->setTimes(3);
+    $launcher->setIsSudo(!true);
 
 //    echo $launcher->getLanuchCommand();
     $launcher->launch();

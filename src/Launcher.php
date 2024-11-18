@@ -2,105 +2,118 @@
 
     namespace Coco\commandRunner;
 
-class Launcher
+    use Coco\commandBuilder\BuilderRegistry;
+    use Coco\commandBuilder\command\Grep;
+    use Coco\commandBuilder\command\Kill;
+    use Coco\commandBuilder\command\Nohup;
+    use Coco\commandBuilder\command\Pkill;
+    use Coco\commandBuilder\command\Ps;
+    use Coco\commandBuilder\command\Sudo;
+
+class Launcher extends LauncherAbstract
 {
-    use \Coco\logger\Logger;
+    protected string $output   = '/dev/null';
+    protected bool   $useNohup = true;
 
-    public int $times = 1;
-
-    public function __construct(public string $command)
+    public function setUseNohup(bool $useNohup): static
     {
+        $this->useNohup = $useNohup;
+
+        return $this;
     }
 
-    public function setTimes(string $times): static
+    public function setOutput(string $output): static
     {
-        $this->times = $times;
+        $this->output = $output;
 
         return $this;
     }
 
     public function getLanuchCommand(): string
     {
-        $arr = [
-            'nohup',
-            $this->command,
-            '> /dev/null 2>&1 &',
-        ];
+        $command = $this->command . ' > ' . $this->output . ' 2>&1';
 
-        return implode(' ', $arr);
+        if ($this->isSudo) {
+            $sudo = Sudo::getIns();
+            $sudo->setSubCommand($command);
+            $command = $sudo;
+        }
+
+        if ($this->useNohup) {
+            $nohup = Nohup::getIns()->runBackend();
+            $nohup->setSubCommand($command);
+            $command = $nohup;
+        }
+
+        return (string)$command;
     }
 
-    public static function getKillByPidCommand(int $pid): string
+    public function getKillByPidCommand(int $pid): string
     {
-        $arr = [
-            'kill',
-            '-9',
-            $pid,
-        ];
+        $command = Kill::getIns();
+        $command->signal(Kill::SIGN_9_KILL)->sendToPid($pid);
 
-        return implode(' ', $arr);
+        if ($this->isSudo) {
+            $sudo = Sudo::getIns();
+            $sudo->setSubCommand($command);
+            $command = $sudo;
+        }
+
+        return (string)$command;
     }
 
-    public static function getKillByKeywordCommand(string $keyword): string
+    public function getKillByKeywordCommand(string $keyword): string
     {
-        $arr = [
-            'pkill',
-            '-f',
-            '"' . $keyword . '"',
-        ];
+        $command = Pkill::getIns();
+        $command->matchFullProcessName()->pattern('"' . $keyword . '"');
 
-        return implode(' ', $arr);
+        if ($this->isSudo) {
+            $sudo = Sudo::getIns();
+            $sudo->setSubCommand($command);
+            $command = $sudo;
+        }
+
+        return (string)$command;
     }
 
     public function killByKeyword(string $keyword): void
     {
-        $command = static::getKillByKeywordCommand($keyword);
+        $command = $this->getKillByKeywordCommand($keyword);
 
         $this->exec($command);
     }
 
     public function killByPid(int $pid): void
     {
-        $command = static::getKillByPidCommand($pid);
+        $command = $this->getKillByPidCommand($pid);
 
         $this->exec($command);
     }
 
     public function launch(): void
     {
-        for ($i = 0; $i < $this->times; $i++) {
-            $command = $this->getLanuchCommand();
-            $this->exec($command);
-        }
-        $this->logInfo('启动完成,当前启动:' . $this->times);
+        $command = $this->getLanuchCommand();
+        $this->exec($command);
     }
 
-    protected function exec($command): bool
+    public function getProcessListByKeyword(string $keyword): array
     {
-        exec($command, $output, $status);
+        $ps = Ps::getIns();
+        $ps->aux();
 
-        if ($status === 0) {
-            $msg = "执行成功: " . $command;
-            $this->logInfo($msg);
+        $grep = Grep::getIns();
+        $grep->ignoreCase()->usePerlRegex()->pattern('"' . $keyword . '"');
 
-            return true;
-        } else {
-            $msg = "执行失败: " . $command;
-            $msg .= json_encode($output, 256);
-            $this->logInfo($msg);
+        $command = BuilderRegistry::getIns();
+        $command->command($ps);
+        $command->pipe();
+        $command->command($grep);
 
-            return false;
+        if ($this->isSudo) {
+            $sudo = Sudo::getIns();
+            $sudo->setSubCommand($command);
+            $command = $sudo;
         }
-    }
-
-    public static function getProcessListByKeyword(string $keyword): array
-    {
-        $arr = [
-            'ps aux | grep -iP',
-            '"' . $keyword . '"',
-        ];
-
-        $command = implode(' ', $arr);
 
         exec($command, $output, $status);
 
@@ -108,7 +121,7 @@ class Launcher
         foreach ($output as $k => $line) {
             preg_match('/^(\S+)\s*(\S+)\s*(\S+)\s*(\S+)\s*(\S+)\s*(\S+)\s*(\S+)\s*(\S+)\s*(\S+)\s*(\S+)\s*([^\r\n]+)/sm', $line, $match);
 
-            if (!str_contains($match[11], 'ps aux') and !str_starts_with($match[11], "grep ")) {
+            if (!str_contains($match[11], 'ps -aux') and !str_starts_with($match[11], "grep ")) {
                 $result[] = [
                     "user"    => $match[1],
                     "pid"     => $match[2],
@@ -126,28 +139,5 @@ class Launcher
         }
 
         return $result;
-    }
-
-
-    protected static function formatMemorySize($size): string
-    {
-        // 定义单位
-        $units = [
-            'B',
-            'KB',
-            'MB',
-            'GB',
-            'TB',
-        ];
-
-        // 选择合适的单位
-        $i = 0;
-        while ($size >= 1024 && $i < count($units) - 1) {
-            $size /= 1024;
-            $i++;
-        }
-
-        // 格式化输出，保留两位小数
-        return round($size, 2) . ' ' . $units[$i];
     }
 }
