@@ -8,16 +8,16 @@
     "packages": [
         {
             "name": "coco-project/command-builder",
-            "version": "v1.0.6",
+            "version": "v1.0.9",
             "source": {
                 "type": "git",
                 "url": "https://github.com/coco-projects/command-builder.git",
-                "reference": "599b40f99a0458b6dd1782cc02132254b32fe29e"
+                "reference": "24eeaac726dd704036f81fecd825417860144055"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/coco-projects/command-builder/zipball/599b40f99a0458b6dd1782cc02132254b32fe29e",
-                "reference": "599b40f99a0458b6dd1782cc02132254b32fe29e",
+                "url": "https://api.github.com/repos/coco-projects/command-builder/zipball/24eeaac726dd704036f81fecd825417860144055",
+                "reference": "24eeaac726dd704036f81fecd825417860144055",
                 "shasum": ""
             },
             "require": {
@@ -41,9 +41,9 @@
             ],
             "support": {
                 "issues": "https://github.com/coco-projects/command-builder/issues",
-                "source": "https://github.com/coco-projects/command-builder/tree/v1.0.6"
+                "source": "https://github.com/coco-projects/command-builder/tree/v1.0.9"
             },
-            "time": "2024-11-17T11:04:09+00:00"
+            "time": "2024-11-19T07:44:53+00:00"
         },
         {
             "name": "coco-project/logger",
@@ -548,16 +548,16 @@
         },
         {
             "name": "phpstan/phpstan",
-            "version": "1.12.10",
+            "version": "1.12.11",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpstan/phpstan.git",
-                "reference": "fc463b5d0fe906dcf19689be692c65c50406a071"
+                "reference": "0d1fc20a962a91be578bcfe7cf939e6e1a2ff733"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/fc463b5d0fe906dcf19689be692c65c50406a071",
-                "reference": "fc463b5d0fe906dcf19689be692c65c50406a071",
+                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/0d1fc20a962a91be578bcfe7cf939e6e1a2ff733",
+                "reference": "0d1fc20a962a91be578bcfe7cf939e6e1a2ff733",
                 "shasum": ""
             },
             "require": {
@@ -602,7 +602,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2024-11-11T15:37:09+00:00"
+            "time": "2024-11-17T14:08:01+00:00"
         },
         {
             "name": "phpunit/php-code-coverage",
