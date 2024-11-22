@@ -43,6 +43,6 @@ class DaemonLauncher extends Launcher
 
     public function chdir(string $dir): void
     {
-        chdir(dirname($dir));
+        chdir($dir);
     }
 }
