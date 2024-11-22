@@ -41,8 +41,10 @@ class DaemonLauncher extends Launcher
         return $this->getProcessListByKeyword($this->bin);
     }
 
-    public function chdir(string $dir): void
+    public function chdir(string $dir): static
     {
         chdir($dir);
+        
+        return $this;
     }
 }
