@@ -8,16 +8,16 @@
     "packages": [
         {
             "name": "coco-project/command-builder",
-            "version": "v1.0.10",
+            "version": "v1.0.11",
             "source": {
                 "type": "git",
                 "url": "https://github.com/coco-projects/command-builder.git",
-                "reference": "840df5721200ec4d1a456aae0bdf827536e9ef64"
+                "reference": "588fa86cdf756a3d990111f8105137e9be0688e0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/coco-projects/command-builder/zipball/840df5721200ec4d1a456aae0bdf827536e9ef64",
-                "reference": "840df5721200ec4d1a456aae0bdf827536e9ef64",
+                "url": "https://api.github.com/repos/coco-projects/command-builder/zipball/588fa86cdf756a3d990111f8105137e9be0688e0",
+                "reference": "588fa86cdf756a3d990111f8105137e9be0688e0",
                 "shasum": ""
             },
             "require": {
@@ -41,9 +41,9 @@
             ],
             "support": {
                 "issues": "https://github.com/coco-projects/command-builder/issues",
-                "source": "https://github.com/coco-projects/command-builder/tree/v1.0.10"
+                "source": "https://github.com/coco-projects/command-builder/tree/v1.0.11"
             },
-            "time": "2024-11-22T01:31:04+00:00"
+            "time": "2024-11-24T04:10:44+00:00"
         },
         {
             "name": "coco-project/logger",

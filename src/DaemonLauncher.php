@@ -4,8 +4,7 @@
 
 class DaemonLauncher extends Launcher
 {
-    public string $command;
-    public string $bin;
+    protected string $bin;
 
     public function __construct(string $command)
     {
@@ -44,7 +43,7 @@ class DaemonLauncher extends Launcher
     public function chdir(string $dir): static
     {
         chdir($dir);
-        
+
         return $this;
     }
 }

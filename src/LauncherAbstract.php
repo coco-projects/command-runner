@@ -10,7 +10,7 @@ abstract class LauncherAbstract
 
     protected bool $isSudo = false;
 
-    public function __construct(public string $command)
+    public function __construct(protected string $command)
     {
     }
 

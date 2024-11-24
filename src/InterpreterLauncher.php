@@ -4,8 +4,7 @@
 
 class InterpreterLauncher extends Launcher
 {
-    public string $command;
-    public string $scriptName;
+    protected string $scriptName;
 
     public function __construct(public string $scriptPath, public string $interpreterBin)
     {
