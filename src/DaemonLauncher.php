@@ -2,48 +2,74 @@
 
     namespace Coco\commandRunner;
 
-class DaemonLauncher extends Launcher
-{
-    protected string $bin;
-
-    public function __construct(string $command)
+    class DaemonLauncher extends Launcher
     {
-        $t         = explode(' ', $command);
-        $this->bin = $t[0];
+        protected string $bin;
+        protected bool   $allowMultiLaunch = false;
 
-        parent::__construct($command);
-    }
+        public function __construct(string $command)
+        {
+            $t         = explode(' ', $command);
+            $this->bin = $t[0];
 
-    public function getStopCommand(): string
-    {
-        return $this->getKillByKeywordCommand($this->bin);
-    }
+            parent::__construct($command);
+        }
 
-    public function stop(): void
-    {
-        $count = $this->getCount();
-        if ($count) {
-            $command = $this->getStopCommand();
-            $this->exec($command);
-        } else {
-            $this->logInfo('没有启动的任务');
+        public function getStopCommand(): string
+        {
+            return $this->getKillByKeywordCommand($this->bin);
+        }
+
+        public function stop(): void
+        {
+            $count = $this->getCount();
+            if ($count)
+            {
+                $command = $this->getStopCommand();
+                $this->exec($command);
+            }
+            else
+            {
+                $this->logInfo('没有启动的任务');
+            }
+        }
+
+        public function getCount(): ?int
+        {
+            return count($this->getProcessList());
+        }
+
+        public function getProcessList(): array
+        {
+            return $this->getProcessListByKeyword($this->bin);
+        }
+
+        public function chdir(string $dir): static
+        {
+            chdir($dir);
+
+            return $this;
+        }
+
+        public function setAllowMultiLaunch(bool $allowMultiLaunch): static
+        {
+            $this->allowMultiLaunch = $allowMultiLaunch;
+
+            return $this;
+        }
+
+        public function launch(): void
+        {
+            if ($this->allowMultiLaunch)
+            {
+                parent::launch();
+            }
+            else
+            {
+                if (!$this->getCount())
+                {
+                    parent::launch();
+                }
+            }
         }
     }
-
-    public function getCount(): ?int
-    {
-        return count($this->getProcessList());
-    }
-
-    public function getProcessList(): array
-    {
-        return $this->getProcessListByKeyword($this->bin);
-    }
-
-    public function chdir(string $dir): static
-    {
-        chdir($dir);
-
-        return $this;
-    }
-}

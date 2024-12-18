@@ -5,6 +5,7 @@
 class InterpreterLauncher extends Launcher
 {
     protected string $scriptName;
+    protected bool   $allowMultiLaunch = false;
 
     public function __construct(public string $scriptPath, public string $interpreterBin)
     {
@@ -57,5 +58,27 @@ class InterpreterLauncher extends Launcher
     protected function chdir(): void
     {
         chdir(dirname($this->scriptPath));
+    }
+
+    public function setAllowMultiLaunch(bool $allowMultiLaunch): static
+    {
+        $this->allowMultiLaunch = $allowMultiLaunch;
+
+        return $this;
+    }
+
+    public function launch(): void
+    {
+        if ($this->allowMultiLaunch)
+        {
+            parent::launch();
+        }
+        else
+        {
+            if (!$this->getCount())
+            {
+                parent::launch();
+            }
+        }
     }
 }
