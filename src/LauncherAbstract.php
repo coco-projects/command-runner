@@ -10,6 +10,8 @@
 
         protected bool $isSudo = false;
 
+        protected string $keyword = '';
+
         public function __construct(protected string $command)
         {
         }
@@ -17,6 +19,13 @@
         abstract public function launch(): void;
 
         abstract public function getLanuchCommand(): string;
+
+        public function setKeyword(string $keyword): static
+        {
+            $this->keyword = $keyword;
+
+            return $this;
+        }
 
         public function setIsSudo(bool $isSudo): static
         {
@@ -59,7 +68,8 @@
             ];
 
             $i = 0;
-            while ($size >= 1024 && $i < count($units) - 1) {
+            while ($size >= 1024 && $i < count($units) - 1)
+            {
                 $size /= 1024;
                 $i++;
             }

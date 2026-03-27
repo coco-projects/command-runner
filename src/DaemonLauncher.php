@@ -12,12 +12,13 @@
             $t         = explode(' ', $command);
             $this->bin = $t[0];
 
+            $this->setKeyword($this->bin);
             parent::__construct($command);
         }
 
         public function getStopCommand(): string
         {
-            return $this->getKillByKeywordCommand($this->bin);
+            return $this->getKillByKeywordCommand();
         }
 
         public function stop(): void
@@ -41,7 +42,7 @@
 
         public function getProcessList(): array
         {
-            return $this->getProcessListByKeyword($this->bin);
+            return $this->getProcessListByKeyword();
         }
 
         public function chdir(string $dir): static
