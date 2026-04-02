@@ -37,7 +37,26 @@
 
         public function getStopCommand(): string
         {
-            return $this->getKillByKeywordCommand($this->scriptPath);
+            return $this->getKillByKeywordCommand();
+        }
+
+        public function getTermCommand(): string
+        {
+            return $this->getTERMByKeywordCommand();
+        }
+
+        public function term(): void
+        {
+            $count = $this->getCount();
+            if ($count)
+            {
+                $command = $this->getTermCommand();
+                $this->exec($command);
+            }
+            else
+            {
+                $this->logInfo('没有启动的任务');
+            }
         }
 
         public function stop(): void
@@ -61,7 +80,7 @@
 
         public function getProcessList(): array
         {
-            return $this->getProcessListByKeyword($this->scriptPath);
+            return $this->getProcessListByKeyword();
         }
 
         protected function chdir(): void

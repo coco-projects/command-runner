@@ -65,6 +65,21 @@
             return (string)$command;
         }
 
+        public function getTERMByPidCommand(int $pid): string
+        {
+            $command = Kill::getIns();
+            $command->signal(Kill::SIGN_15_TERM)->sendToPid($pid);
+
+            if ($this->isSudo)
+            {
+                $sudo = Sudo::getIns();
+                $sudo->setSubCommand($command);
+                $command = $sudo;
+            }
+
+            return (string)$command;
+        }
+
         public function getKillByKeywordCommand(): string
         {
             $command = Pkill::getIns();
@@ -80,9 +95,38 @@
             return (string)$command;
         }
 
+        public function getTERMByKeywordCommand(): string
+        {
+            $command = Pkill::getIns();
+            $command->matchFullProcessName()->signal(Pkill::SIGN_15_TERM)->pattern('"' . $this->keyword . '"');
+
+            if ($this->isSudo)
+            {
+                $sudo = Sudo::getIns();
+                $sudo->setSubCommand($command);
+                $command = $sudo;
+            }
+
+            return (string)$command;
+        }
+
+        public function termByKeyword(): void
+        {
+            $command = $this->getTERMByKeywordCommand();
+
+            $this->exec($command);
+        }
+
+        public function termByPid(int $pid): void
+        {
+            $command = $this->getTERMByPidCommand($pid);
+
+            $this->exec($command);
+        }
+
         public function killByKeyword(): void
         {
-            $command = $this->getKillByKeywordCommand($this->keyword);
+            $command = $this->getKillByKeywordCommand();
 
             $this->exec($command);
         }

@@ -16,6 +16,16 @@
 
 //    $launcher->killByKeyword('test.php');
 
-    $launcher->launch();
+    echo $launcher->getKillByPidCommand(456);
+    echo PHP_EOL;
+    echo $launcher->getKillByKeywordCommand();
+    echo PHP_EOL;
+
+    echo $launcher->getTERMByPidCommand(55);
+    echo PHP_EOL;
+    echo $launcher->getTERMByKeywordCommand();
+    echo PHP_EOL;
+
+    //    $launcher->launch();
 
 
