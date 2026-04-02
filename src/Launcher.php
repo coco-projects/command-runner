@@ -12,8 +12,9 @@
 
     class Launcher extends LauncherAbstract
     {
-        protected string $output   = '/dev/null';
-        protected bool   $useNohup = true;
+        protected string $output           = '/dev/null';
+        protected bool   $useNohup         = true;
+        protected bool   $allowMultiLaunch = false;
 
         public function setUseNohup(bool $useNohup): static
         {
@@ -141,7 +142,17 @@
         public function launch(): void
         {
             $command = $this->getLanuchCommand();
-            $this->exec($command);
+            if ($this->allowMultiLaunch)
+            {
+                $this->exec($command);
+            }
+            else
+            {
+                if (!$this->getCount())
+                {
+                    $this->exec($command);
+                }
+            }
         }
 
         public function getProcessListByKeyword(): array
@@ -191,4 +202,60 @@
 
             return $result;
         }
+
+        public function getStopCommand(): string
+        {
+            return $this->getKillByKeywordCommand();
+        }
+
+        public function getTermCommand(): string
+        {
+            return $this->getTERMByKeywordCommand();
+        }
+
+        public function term(): void
+        {
+            $count = $this->getCount();
+            if ($count)
+            {
+                $command = $this->getTermCommand();
+                $this->exec($command);
+            }
+            else
+            {
+                $this->logInfo('没有启动的任务');
+            }
+        }
+
+        public function stop(): void
+        {
+            $count = $this->getCount();
+            if ($count)
+            {
+                $command = $this->getStopCommand();
+                $this->exec($command);
+            }
+            else
+            {
+                $this->logInfo('没有启动的任务');
+            }
+        }
+
+        public function getCount(): ?int
+        {
+            return count($this->getProcessList());
+        }
+
+        public function getProcessList(): array
+        {
+            return $this->getProcessListByKeyword();
+        }
+
+        public function setAllowMultiLaunch(bool $allowMultiLaunch): static
+        {
+            $this->allowMultiLaunch = $allowMultiLaunch;
+
+            return $this;
+        }
+
     }
